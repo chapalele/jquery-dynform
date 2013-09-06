@@ -1,10 +1,16 @@
 // question label widget:
 // ----------------------
 $.widget( "dynform.questionInput", {
+
+    _label : null,
+    _input : null,
     
     options: {
-        type : 'textarea',
-        value : 'Default value'
+        type    : 'textarea',
+        label   : 'input label',
+        value   : 'Default value',
+        name    : null,
+        checked : false, 
     },
     
     // construct
@@ -12,7 +18,35 @@ $.widget( "dynform.questionInput", {
         this.element.addClass( "dyn-input" );
         this.refresh();
     },
+
+    _createLabel : function() {
+        label = this.element.find('label,.question-input-label,[data-role="question-input-label"]');
+        return (label.length) ? label[0] : $('<label></label>').text(this.options.label).prependTo(this.element);  
+    },
     
+    _createInput : function() {
+        input = this.element.find('input,.question-input-input,[data-role="question-input-input"]');
+
+        if (input.length) return input;
+
+        switch (this.options.type)
+        {
+        case 'textarea':
+            input = $('<textarea></textarea>').text(this.options.value).attr('name', this.options.name);
+            break;
+
+        default:
+            input = $('<input/>').attr({
+                name : this.options.name,
+                value: this.options.value,
+                type : this.options.type, 
+            })    
+        }
+        $('<input>').text(this.options.label).prependTo(this.element);  
+
+
+    }, 
+
     _setOption: function( key, value ) {
         this._super( key, value );
     },
@@ -39,10 +73,8 @@ $.widget( "dynform.questionTitle", {
     // construct
     _create: function() {
         this.element.addClass( "dyn-title" );
-        
         var content = $.trim(this.element.text());
         if ( content ) this._setOption('text', content);
-                
         this.refresh();
     },
     
@@ -96,15 +128,15 @@ $.widget( "dynform.questionTip", {
 
 $.widget( "dynform.question", {
     
-    _label : null,
-    _inputs : null,
-    _tip : null,
+    _label  : null,
+    _inputs : [],
+    _tip    : null,
     
     options: {
-        value: 0,
-        title : {},
-        input : {},
-        tip : {}
+        Value   : 0,
+        title   : {},
+        input   : {},
+        tip     : {}
     },
     
     // construct
@@ -122,22 +154,12 @@ $.widget( "dynform.question", {
     
     _createTitle : function() {
         title = this.element.find('h2,h3,.question-title,[data-role="question-title"]');
-        
-        if (title.length) {
-            // options = {label: this.options.optionTitle};
-            return title.questionTitle().guid();
-        }
-        
-        return $('<div></div>').questionTitle(this.options.title).guid().prependTo(this.element);      
+        return (title.length) ? title.questionTitle().guid() : $('<div></div>').questionTitle(this.options.title).guid().prependTo(this.element);  
     },
     
     _createInputs : function() {
         this._inputs = this.element.find('input,textarea,[data-role="question-input"]');
-        
-        if (this._inputs.length) {
-            return this._inputs.each(this._setUpInput);
-        }        
-        return this._inputs.push($('<textarea></textarea>').questionInput(this.options.input).guid().appendTo(this.element));
+        return (this._inputs.length) ? this._inputs.each(this._setUpInput) : this._inputs.push($('<textarea></textarea>').questionInput(this.options.input).guid().appendTo(this.element));
     },
     
     _setUpInput : function(){
@@ -147,23 +169,16 @@ $.widget( "dynform.question", {
     
     _createTip : function() {
         tip = this.element.find('.tip,[data-role="question-tip"]');
-        
         return (tip.length) ? tip.questionTip(this.options.tip).guid() : $('<div></div>').questionTip(this.options.tip).guid().appendTo(this.element);      
     },  
     
     // public methods
     label : function( value ) {
-        if ( value === undefined ) {
-            return _title.questionTitle("option","text");
-        }
-        return this._title.questionTitle("option","text",value);
+        return (value === undefined) ? _title.questionTitle("option","text") : this._title.questionTitle("option","text",value);
     },
     
     tip : function( value ) {
-        if ( value === undefined ) {
-            return _tip.questionTip("option","text");
-        }
-        return this._tip.questionTip("option","text",value);
+        return (value === undefined) ? _tip.questionTip("option","text") : this._tip.questionTip("option","text",value);
     },
     
     _setOption: function( key, value ) {
