@@ -9,19 +9,38 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
 		<script src="js/guid.js"></script>
-		<script src="js/dynform.js"></script>
+<!-- 		// <script src="js/dynform.js"></script> -->
+		<script src="js/dynform.questionInput.js"></script>
+		
+		<script src="js/dynform.questionTitle.js"></script>
+		<script src="js/dynform.questionBody.js"></script>
+		<script src="js/dynform.questionTip.js"></script>
+
+		<script src="js/dynform.question.js"></script>
 
 
 	</head>
 
 	<body>
 
-		<div class="question"></div>
 
+		<div class="question dyn-question" id="js-aefde997-b6ac-4c2d-9ebb-dcf85635e478">
+			<div class="dyn-question-title">Hola</div>
+			<div class="dyn-question-body">
+				<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
+					<label>label 1<input value="Default value" type="text" name="input1"></label>
+				</div>
+
+				<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da79566">
+					<label>label 2<input value="Default value" type="text" name="input2"></label>
+				</div>				
+			</div>
+			<div class="dyn-question-tip">Question tipeo</div>
+		</div>
 
 		<script>
 			$(function() {
-			    var uli = $(".question").question().guid().question("label","next");
+			    var uli = $(".question").question().guid();
 			});
 			
 		</script>
