@@ -3,14 +3,14 @@
 $.widget( "dynform.questionTitle", {
     
     options: {
-        text : 'Question title'
+        title : 'Question title'
     },
     
     // construct
     _create: function() {
         this.element.addClass( "dyn-question-title" );
         var content = $.trim(this.element.text());
-        if ( content ) this._setOption('text', content);
+        if ( content ) this._setOption('title', content);
         this.refresh();
     },
     
@@ -24,6 +24,6 @@ $.widget( "dynform.questionTitle", {
     },    
        
     refresh: function() {
-        this.element.text( this.options.text );
+        this.element.text( this.options.title );
     }
 });

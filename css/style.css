@@ -1,3 +1,8 @@
-.dyn-question {background-color: rgba(100,60,150,0.2)}
-.dyn-question-title {font-weight: bold;}
-.dyn-question-tip {color: gray;}
+.dyn-question {background-color: rgba(100,60,150,0.2); margin-bottom: 5px; position: relative;}
+.dyn-question-title {font-weight: bold; padding: 5px 0;}
+.dyn-question-tip {color: gray; padding: 3px 0;}
+.dyn-question-input {position: relative; background-color: rgba(0,0,0,0.2); padding: 2px 0;}
+.dyn-question-input label {display: block;}
+.dyn-question-input label textarea {display: block;}
+.dyn-control {position: absolute; top: 0; right: 0;}
+.dyn-control .ui-widget {font-size: 10px;}

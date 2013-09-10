@@ -23,9 +23,10 @@
 // 
 $.widget( "dynform.question", {
     
-    _title  : null,
-    _body   : null,
-    _tip    : null,
+    _title      : null,
+    _body       : null,
+    _tip        : null,
+    _control    : null,
     
     options: {
         acceptedTitleTag : [
@@ -45,20 +46,27 @@ $.widget( "dynform.question", {
             '[data-role="question-tip"]'
         ],             
 
-        title   : {},
-        body    : {},
-        tip     : {}
+        title   : 'Question title',
+        body    : null,
+        tip     : 'Question tip',
+        name    : null 
     },
     
     // construct
     _create: function() {
-        this.element.addClass( "dyn-question" );    
+        
+        this.element.addClass( "dyn-question" );   
+
+        this.element.guid(); 
         
         this.options = $.extend(this.options,this.element.data());
 
-        this._title = this._detectTitle()   || this._createTitle();
-        this._body  = this._detectBody()    || this._createBody();
-        this._tip   = this._detectTip()     || this._createTip();
+        this.options.name = this.options.name || this.element.attr("id");
+
+        this._title     = this._detectTitle()   || this._createTitle();
+        this._body      = this._detectBody()    || this._createBody();
+        this._tip       = this._detectTip()     || this._createTip();
+        this._control   = this._createControl();
         
         return this;
     },
@@ -82,21 +90,41 @@ $.widget( "dynform.question", {
         return tip.questionTip();    
     },
 
-
     _createTitle : function() {
-        var title = $('<div></div>').questionTitle(this.options.title);
+        var title = $('<div></div>').questionTitle(this.options);
         return title.prependTo(this.element);  
     },
 
     _createBody : function() {
-        var body = $('<div></div>').questionBody(this.options.body);
+        var body = $('<div></div>').questionBody(this.options);
         return body.appendTo(this.element);  
     },    
         
     _createTip : function() {
-        var tip = $('<div></div>').questionTip(this.options.tip);
+        var tip = $('<div></div>').questionTip(this.options);
         return tip.appendTo(this.element);      
     },
+
+    /**
+     * _createControl method
+     * =====================
+     * Creates and inserts elements to be used in edition mode
+     * 
+     * @return {jQuery Object} 
+     * - jQuery Object containing the recently created div and its children elements 
+     *
+     * @author Danilo Lizama (dlizama@cisal.cl)
+     * @version 1.0 2013/09/09
+     */   
+    _createControl : function() {
+        var menu = $('<div></div>').addClass("dyn-question-control dyn-control buttongroup");
+
+        var editButton      = $('<span/>').text('e').addClass("button edit").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-pencil"} } );
+        var deleteButton    = $('<span/>').text('x').addClass("button delete").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
+        var addInputButton  = $('<span/>').text('a').addClass("button add").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-plus"} } );
+
+        return menu.prependTo(this.element);
+    },     
 
     
     // public methods

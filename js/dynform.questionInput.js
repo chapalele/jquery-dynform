@@ -44,7 +44,14 @@ $.widget( "dynform.questionInput", {
     
     // construct
     _create: function() {
+
         this.element.addClass( "dyn-question-input" );
+
+        if ( $.inArray(this.options.type, ['text', 'checkbox']) !== -1) {
+            this.element.guid();
+        }  
+
+        this.options.name = this.options.name || this.element.attr("id");      
 
         if ( this.options.editable ) {
             this.element.addClass( "dyn-editable");
@@ -116,7 +123,11 @@ $.widget( "dynform.questionInput", {
      * @version 1.0 2013/09/09
      */
     _createLabel : function() {
-        return $('<label></label>').text(this.options.label).prependTo(this.element);
+        var label = $('<label></label>');
+        if (this.options.type !== 'textarea') {
+            label.text(this.options.label);
+        }
+        return label.prependTo(this.element);
     },
     
     /**
@@ -131,6 +142,7 @@ $.widget( "dynform.questionInput", {
      * @version 1.0 2013/09/09
      */    
     _createInput : function() {
+
         switch (this.options.type)
         {
             case 'textarea':
@@ -163,8 +175,8 @@ $.widget( "dynform.questionInput", {
     _createControl : function() {
         var menu = $('<div></div>').addClass("dyn-question-input-control dyn-control buttongroup");
 
-        var editButton      = $('<span/>').text('e').addClass("button edit").appendTo(menu);
-        var deleteButton    = $('<span/>').text('x').addClass("button delete").appendTo(menu);
+        var editButton      = $('<span/>').text('e').addClass("button edit").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-pencil"} } );
+        var deleteButton    = $('<span/>').text('x').addClass("button delete").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
 
         return menu.prependTo(this.element);
     },    
