@@ -46,10 +46,12 @@ $.widget( "dynform.question", {
             '[data-role="question-tip"]'
         ],             
 
-        title   : 'Question title',
-        body    : null,
-        tip     : 'Question tip',
-        name    : null 
+        title           : 'Question title',
+        tip             : 'Question tip',
+        name            : null,
+        editable        : true,
+        confirmDelete   : true, 
+        type            : 'textarea'
     },
     
     // construct
@@ -59,14 +61,17 @@ $.widget( "dynform.question", {
 
         this.element.guid(); 
         
-        this.options = $.extend(this.options,this.element.data());
+        this.options        = $.extend(this.options,this.element.data());
 
-        this.options.name = this.options.name || this.element.attr("id");
+        this.options.name   = this.options.name || this.element.attr("id");
 
-        this._title     = this._detectTitle()   || this._createTitle();
-        this._body      = this._detectBody()    || this._createBody();
-        this._tip       = this._detectTip()     || this._createTip();
-        this._control   = this._createControl();
+        this._title         = this._detectTitle()   || this._createTitle();
+        this._body          = this._detectBody()    || this._createBody();
+        this._tip           = this._detectTip()     || this._createTip();
+
+        if (this.options.editable) {
+            this._control   = this._createControl();
+        }
         
         return this;
     },
@@ -105,6 +110,11 @@ $.widget( "dynform.question", {
         return tip.appendTo(this.element);      
     },
 
+    _allowCreate : function() {
+        console.log(this.options.type);
+        return ($.inArray(this.options.type, ['text','checkbox','radio']) !== -1) ? true : false;
+    },
+
     /**
      * _createControl method
      * =====================
@@ -117,16 +127,57 @@ $.widget( "dynform.question", {
      * @version 1.0 2013/09/09
      */   
     _createControl : function() {
-        var menu = $('<div></div>').addClass("dyn-question-control dyn-control buttongroup");
+        var menu            = $('<div></div>')
+                                    .addClass("dyn-question-control dyn-control buttongroup");
 
-        var editButton      = $('<span/>').text('e').addClass("button edit").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-pencil"} } );
-        var deleteButton    = $('<span/>').text('x').addClass("button delete").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
-        var addInputButton  = $('<span/>').text('a').addClass("button add").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-plus"} } );
+        // var editButton      = $('<span/>')
+        //                             .text('e')
+        //                             .addClass("button edit")
+        //                             .appendTo(menu).button( { text: false, icons: {primary: "ui-icon-pencil"} } );
+
+        var deleteButton    = $('<span/>')
+                                    .text('delete question')
+                                    .addClass("button delete")
+                                    .appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
+
+        if ( this._allowCreate() ) {
+            var addInputButton  = $('<span/>')
+                                        .text('add an option')
+                                        .addClass("button add")
+                                        .appendTo(menu).button( { text: false, icons: {primary: "ui-icon-plus"} } );            
+        }
+
+
+        menu.on('click','.button', this._onButtonClick);
 
         return menu.prependTo(this.element);
-    },     
+    },    
 
-    
+    _onButtonClick : function(e) {
+        e.preventDefault();
+
+        var $clicked = $(e.target);
+
+        var $button = ( $clicked.hasClass("button") ) ? $clicked : $clicked.parent('.button');
+
+        if ($button.hasClass("delete")) {
+            $button.parents(".dyn-question").question("destroy");
+        }
+
+    },
+
+
+    destroy : function() {
+
+        if ( this._control ) {
+            this._control.off('click', '.button', this._onButtonClick);
+            this.element.remove();
+        }
+
+        this._super();
+
+    },    
+
     // public methods
     label : function( value ) {
         return (value === undefined) ? _title.questionTitle("option","text") : this._title.questionTitle("option","text",value);

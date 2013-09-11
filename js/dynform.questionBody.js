@@ -38,5 +38,9 @@ $.widget( "dynform.questionBody", {
     // public methods
     addInput: function() {
         this._createinputs();
-    }         
+    }, 
+
+    inputs : function() {
+        return this._inputs;
+    }        
 });

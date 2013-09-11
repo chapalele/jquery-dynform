@@ -51,17 +51,12 @@
 
 			$(function() {
 			     var uli = $(".question").question();
-			     buttons();
 			});
 
 			$(".buttons").on('click', function(e){
 				var etype = e.target.id || 'textarea';
 				$("<div>").question({type: etype }).appendTo('body');
-				buttons();
-
 			});
-
-
 			
 		</script>
 

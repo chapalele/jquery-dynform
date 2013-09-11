@@ -1,18 +1,23 @@
-// question label widget:
-// ----------------------
-// produces: 
-// <div class="dyn-input" id="unique" attribute="attribute">
-//      <label>Label text
-//      
-//          <input type="type" value="value" name="name" properties[selected, cheqcked, disabled]>
-//          or
-//          <textarea name="name">value</textarea>
-// 
-//      </label>
-//      
-//      <div class="dyn-input-controls"></div>
-// </div>
-// 
+/**
+ * question label widget:
+ * ----------------------
+ * produces: 
+ * <div class="dyn-input" id="unique" attribute="attribute">
+ *     <label>Label text
+ *         <input type="type" value="value" name="name" properties[selected, cheqcked, disabled]>
+ *         or
+ *         <textarea name="name">value</textarea>
+ *     </label>
+ *     <div class="dyn-input-controls"> ./ control buttons /. </div>
+ * </div>
+ *
+ * Requires:
+ * ---------
+ * -jQueryUI widget
+ * -JQueryUI buttons
+ * 
+ */
+
 $.widget( "dynform.questionInput", {
 
     _label      : null,
@@ -37,9 +42,7 @@ $.widget( "dynform.questionInput", {
         label   : 'input label',
         value   : 'Default value',
         name    : null,
-        checked : false, 
-
-        editable : false
+        checked : false
     },
     
     // construct
@@ -47,7 +50,7 @@ $.widget( "dynform.questionInput", {
 
         this.element.addClass( "dyn-question-input" );
 
-        if ( $.inArray(this.options.type, ['text', 'checkbox']) !== -1) {
+        if ( this._mustHaveId ) {
             this.element.guid();
         }  
 
@@ -59,8 +62,16 @@ $.widget( "dynform.questionInput", {
 
         this._label     = this._detectLabel() || this._createLabel();
         this._input     = this._detectInput() || this._createInput();
-        this._control   = this._createControl();
 
+        if ( this.options.editable ) {
+            this._control   = this._createControl();    
+        }
+        
+
+    },
+
+    _mustHaveId : function() {
+        return ($.inArray(this.options.type, ['text', 'checkbox']) !== -1) ? true : false;
     },
 
     /**
@@ -173,13 +184,61 @@ $.widget( "dynform.questionInput", {
      * @version 1.0 2013/09/09
      */   
     _createControl : function() {
-        var menu = $('<div></div>').addClass("dyn-question-input-control dyn-control buttongroup");
+        var menu = $('<div></div>')
+                        .addClass("dyn-question-input-control dyn-control buttongroup")
+                        .on('click', '.button', this._onButtonClick);
 
-        var editButton      = $('<span/>').text('e').addClass("button edit").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-pencil"} } );
-        var deleteButton    = $('<span/>').text('x').addClass("button delete").appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
+        // var editButton      = $('<span/>').text('e')
+        //                             .addClass("button edit")
+        //                             .appendTo(menu)
+        //                             .button( { text: false, icons: {primary: "ui-icon-pencil"} } );
+
+        var deleteButton    = $('<span/>')
+                                    .text('delete option')
+                                    .addClass("button delete")
+                                    .appendTo(menu).button( { text: false, icons: {primary: "ui-icon-trash"} } );
 
         return menu.prependTo(this.element);
-    },    
+    },   
+
+    destroy : function() {
+
+        if (this._control) {
+            this._control.off('click', '.button', this._onButtonClick);
+            this.element.remove();
+        }
+
+        this._super();
+
+    },
+
+
+    
+
+    /**
+     * _onButtonClick method
+     * =====================
+     * Handles click event for controls (in edition mode)
+     * 
+     * @param  {eventObject}    : click 
+     * @return {jQueryObject}   : target element
+     */
+    _onButtonClick : function(e) {
+        e.preventDefault();
+
+        var $clicked = $(e.target);
+
+        var $button = ( $clicked.hasClass("button") ) ? $clicked : $clicked.parent('.button');
+
+        console.log("working...");
+
+        if ($button.hasClass("delete")) {
+            console.log("deleting...");
+            console.log($button.parents(".dyn-question-input").get(0));
+            $button.parents(".dyn-question-input").questionInput("destroy");
+        }
+
+    }, 
 
     /**
      * _setOption method
