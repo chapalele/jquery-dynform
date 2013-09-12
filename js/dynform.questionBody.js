@@ -17,23 +17,23 @@ $.widget( "dynform.questionBody", {
         this._inputs = this._detectInputs() || this._createInputs();
     },
 
-    _detectInputs : function() {
-        var inputs = this.element.find( this.options.acceptedInputsTag.join() );
-        if (inputs.length) {
-            inputs.each( this._setUpInput );
-            return inputs;
-        }
-        return false;
-    },
+    // _detectInputs : function() {
+    //     var inputs = this.element.find( this.options.acceptedInputsTag.join() );
+    //     if (inputs.length) {
+    //         inputs.each( this._setUpInput );
+    //         return inputs;
+    //     }
+    //     return false;
+    // },
 
-    _createInputs : function() {
-        this._inputs.push($('<div></div>').questionInput(this.options).appendTo(this.element));
-        return this._inputs;
-    },     
+    // _createInputs : function() {
+    //     this._inputs.push($('<div></div>').questionInput(this.options).appendTo(this.element));
+    //     return this._inputs;
+    // },     
 
-    _setUpInput : function() {
-        return $(this).questionInput();
-    },   
+    // _setUpInput : function() {
+    //     return $(this).questionInput();
+    // },   
 
     // public methods
     addInput: function() {

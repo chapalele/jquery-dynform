@@ -39,7 +39,12 @@ $.widget( "dynform.question", {
         acceptedBodyTag : [
             '.dyn-question-body',
             '[data-role="question-body"]'
-        ],    
+        ],   
+
+        acceptedInputsTag : [
+            '.dyn-question-input',
+            '[data-role="question-input"]'
+        ],         
 
         acceptedTipTag : [
             '.dyn-question-tip',
@@ -59,14 +64,21 @@ $.widget( "dynform.question", {
         
         this.element.addClass( "dyn-question" );   
 
+        // each question element would have an unique ID, so if the ID attribute is not present, it will be created using guid plugin
         this.element.guid(); 
         
-        this.options        = $.extend(this.options,this.element.data());
+        // we can set options using data attribute in html, this can be useful in combination with a php script
+        // i.e. <div data-type="textarea"> will generate this.options.type = "textarea" in this object
+        // ATENTION: this overrides options setted by javascript when creating the object: $( [selector] ).question( { overriden-option-if-using-html-data: 'never used value'} )
+        $.extend( true, this.options, this.element.data() );
 
-        this.options.name   = this.options.name || this.element.attr("id");
+        // if there's no name, we are going to use id
+        // name is not used in question elements, but we will save it among options for further usage
+        this.options.name   = this.options.name     || this.element.attr("id");
+
+        this._inputs        = this._detectInputs()  || this._createInputs();
 
         this._title         = this._detectTitle()   || this._createTitle();
-        this._body          = this._detectBody()    || this._createBody();
         this._tip           = this._detectTip()     || this._createTip();
 
         if (this.options.editable) {
@@ -95,6 +107,33 @@ $.widget( "dynform.question", {
         return tip.questionTip();    
     },
 
+    _detectInputs : function() {
+        var inputs = this.element.find( this.options.acceptedInputsTag.join() );
+
+        console.log(inputs.length);
+
+        if (inputs.length) {
+            inputs.each( function(){
+                $(this).questionInput();
+            } );
+            return inputs;
+        }
+        return false;
+    },
+
+    _createInputs : function() {
+        return [ this._createInput() ];
+    },
+
+    _createInput : function() {
+        var input = $('<div></div>').questionInput(this.options);
+        return input.appendTo(this.element);
+    },     
+
+    _setUpInput : function() {
+        return $(this).questionInput();
+    },       
+
     _createTitle : function() {
         var title = $('<div></div>').questionTitle(this.options);
         return title.prependTo(this.element);  
@@ -111,7 +150,6 @@ $.widget( "dynform.question", {
     },
 
     _allowCreate : function() {
-        console.log(this.options.type);
         return ($.inArray(this.options.type, ['text','checkbox','radio']) !== -1) ? true : false;
     },
 

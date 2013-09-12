@@ -241,6 +241,23 @@ $.widget( "dynform.questionInput", {
     }, 
 
     /**
+     * type method
+     * =================
+     * returns option.type of this 
+     * 
+     * @param {any} value  : changes in type are not allowed
+     *
+     * @author Danilo Lizama (dlizama@cisal.cl)
+     * @version 1.0 2013/09/12
+     */
+    type : function( value ) {
+        if (value !== undefined) {
+            console.log("type attribute cannot be modified");
+        } 
+        return this.options.type;
+    },    
+
+    /**
      * _setOption method
      * =================
      * Overrides $.widget _setOption method
