@@ -27,6 +27,7 @@ $.widget( "dynform.question", {
     _body       : null,
     _tip        : null,
     _control    : null,
+    _nada       : "content",
     
     options: {
         acceptedTitleTag : [
@@ -76,7 +77,7 @@ $.widget( "dynform.question", {
         // name is not used in question elements, but we will save it among options for further usage
         this.options.name   = this.options.name     || this.element.attr("id");
 
-        this._inputs        = this._detectInputs()  || this._createInputs();
+        this._inputs        = this._detectInputs()  || this._createInputs( this.options );
 
         this._title         = this._detectTitle()   || this._createTitle();
         this._tip           = this._detectTip()     || this._createTip();
@@ -110,25 +111,39 @@ $.widget( "dynform.question", {
     _detectInputs : function() {
         var inputs = this.element.find( this.options.acceptedInputsTag.join() );
 
-        console.log(inputs.length);
-
         if (inputs.length) {
+            questionObject = this;
             inputs.each( function(){
-                $(this).questionInput();
+                // set options to pass to recently detected questionInput objects
+                var options = {
+                    editable: questionObject.options.editable 
+                };
+                $(this).questionInput( options );
             } );
+            this.options.type = inputs.first().questionInput("type");
+            // this._consistencyCheck( inputs );
             return inputs;
         }
+
         return false;
     },
 
-    _createInputs : function() {
-        return [ this._createInput() ];
+    _consistencyCheck : function( inputs ) {
+        // like bind(this) in mootols : questionObject allows pass this object as reference to an anonimous function
+        var questionObject = this;
+
+        inputs.each( function() {
+            input = $(this);
+            if ( input.questionInput("type") !== questionObject.options.type ) {
+                console.log("destroyed for consistency: all inputs must have the same type in a question");
+                input.questionInput("destroy");
+            };
+        });
     },
 
-    _createInput : function() {
-        var input = $('<div></div>').questionInput(this.options);
-        return input.appendTo(this.element);
-    },     
+    _createInputs : function( options ) {
+        return [ this.addInput( options ) ];
+    },  
 
     _setUpInput : function() {
         return $(this).questionInput();
@@ -146,11 +161,15 @@ $.widget( "dynform.question", {
         
     _createTip : function() {
         var tip = $('<div></div>').questionTip(this.options);
-        return tip.appendTo(this.element);      
+        return tip.insertAfter(this._title);      
     },
 
     _allowCreate : function() {
         return ($.inArray(this.options.type, ['text','checkbox','radio']) !== -1) ? true : false;
+    },
+
+    _acceptMultipleName : function () {
+        return ($.inArray(this.options.type, ['text', 'checkbox']) !== -1) ? true : false;
     },
 
     /**
@@ -223,6 +242,38 @@ $.widget( "dynform.question", {
     
     tip : function( value ) {
         return (value === undefined) ? _tip.questionTip("option","text") : this._tip.questionTip("option","text",value);
+    },
+
+    inputs : function () {
+        return this._inputs;
+    },
+
+    addInput : function( options ) {
+        options = options || {};
+        
+        // new input type must be equal to current question type 
+        options.type = this.options.type;
+
+        // if options.name is not provided we will take the default question name
+        // for checkboxes and text a "[]" must be added, this allows to pass multiple values in the same variable to server
+        if ( typeof options.name === "undefined" && this._acceptMultipleName ) {
+            options.name = this._prepMultipleName();
+        }
+        else if ( typeof options.name === "undefined" ) {
+            options.name = this.options.name;
+        }
+
+        var input = $('<div></div>').questionInput( options );
+        return input.appendTo(this.element);
+    },  
+
+    _prepMultipleName : function( name ) {
+        name = name || this.options.name;
+        var suffix = '[]';
+        if (name.substr(name.length - 2) !== suffix ) {
+            this.options.name = name+suffix;
+        }
+        return this.options.name;
     },
     
     _setOption: function( key, value ) {

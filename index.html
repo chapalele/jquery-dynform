@@ -34,7 +34,7 @@
 		<div class="question">
 
 			<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
-				<label>label 1<input value="Default value" type="radio" name="input1"></label>
+				<label>label nueva<input value="Default value" type="checkbox" name="input1"></label>
 			</div>
 
 			<div class="dyn-question-input">
@@ -61,12 +61,16 @@
 
 			$(function() {
 			     var uli = $(".question").question();
+
+			     // uli.question("addInput");
 			});
 
 			$(".buttons").on('click', function(e){
 				var etype = e.target.id || 'textarea';
 				$("<div>").question({type: etype }).appendTo('body');
 			});
+
+
 			
 		</script>
 

@@ -63,6 +63,8 @@ $.widget( "dynform.questionInput", {
         this._label     = this._detectLabel() || this._createLabel();
         this._input     = this._detectInput() || this._createInput();
 
+        console.log(this.options.editable);
+
         if ( this.options.editable ) {
             this._control   = this._createControl();    
         }
@@ -157,15 +159,18 @@ $.widget( "dynform.questionInput", {
         switch (this.options.type)
         {
             case 'textarea':
-                input = $('<textarea></textarea>').attr('name', this.options.name).text(this.options.value);
+                input = $('<textarea></textarea>')
+                    .attr('name', this.options.name)
+                    .text(this.options.value);
                 break;
 
             default:
-                input = $('<input/>').attr({
-                    name : this.options.name,
-                    value: this.options.value,
-                    type : this.options.type, 
-                });    
+                input = $('<input/>')
+                    .attr({
+                        name : this.options.name,
+                        value: this.options.value,
+                        type : this.options.type, 
+                    });    
         }
 
         return input.appendTo(this._label);  
@@ -202,6 +207,8 @@ $.widget( "dynform.questionInput", {
     },   
 
     destroy : function() {
+
+        console.log("destroying...");
 
         if (this._control) {
             this._control.off('click', '.button', this._onButtonClick);
@@ -243,7 +250,7 @@ $.widget( "dynform.questionInput", {
     /**
      * type method
      * =================
-     * returns option.type of this 
+     * returns option.type of this object
      * 
      * @param {any} value  : changes in type are not allowed
      *
