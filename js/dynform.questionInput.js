@@ -50,22 +50,22 @@ $.widget( "dynform.questionInput", {
 
         this.element.addClass( "dyn-question-input" );
 
+        this._input     = this._detectInput() || this._createInput();
+
+        //TODO detect input improve
+
+
         if ( this._mustHaveId ) {
             this.element.guid();
         }  
 
-        this.options.name = this.options.name || this.element.attr("id");      
+        this.options.name = this.options.name || this.element.attr("id");
+
+        this._label     = this._detectLabel() || this._createLabel();
+        
 
         if ( this.options.editable ) {
             this.element.addClass( "dyn-editable");
-        }
-
-        this._label     = this._detectLabel() || this._createLabel();
-        this._input     = this._detectInput() || this._createInput();
-
-        console.log(this.options.editable);
-
-        if ( this.options.editable ) {
             this._control   = this._createControl();    
         }
         
@@ -122,7 +122,8 @@ $.widget( "dynform.questionInput", {
         this.options.name   = input.attr("name");
 
         return input;
-    },    
+    },
+
 
     /**
      * _createLabel method

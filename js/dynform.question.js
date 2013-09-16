@@ -3,24 +3,18 @@
 // produces:
 // <div class="dyn-question" id="unique" attribute="attributte">
 // 
-//      <div class="dyn-question-title">contents of title</div> //questionTitle object
-//
-//      <div class="dyn-question-body">
+//      <div class="dyn-question-controls"> / .... / </div> 
+// 
+//      <div class="dyn-question-title">contents of title</div>                         // *** questionTitle object
+//      <div class="dyn-question-tip">contents of tip</div>                             // *** questionTip object
 //      
-//          <div class="dyn-question-input" id="uniqueInputID#1">contents of input</div> //questionInput object
-//          <div class="dyn-question-input" id="uniqueInputID#2">contents of input</div> //questionInput object
-//          ...
-//          <div class="dyn-question-input" id="uniqueInputID#N">contents of input</div> //questionInput object     
-//                         
-//      </div>
-//                  
-//      <div class="dyn-question-tip">contents of tip</div> //questionTip object
+//      <div class="dyn-question-input" id="uniqueInputID#1">contents of input</div>    // *** questionInput object
+//      <div class="dyn-question-input" id="uniqueInputID#2">contents of input</div>    // *** questionInput object
+//      ...
+//      <div class="dyn-question-input" id="uniqueInputID#N">contents of input</div>    // *** questionInput object     
 //      
-//      <div class="dyn-question-controls"></div>
 // </div>
-// 
-// 
-// 
+
 $.widget( "dynform.question", {
     
     _title      : null,
@@ -37,11 +31,6 @@ $.widget( "dynform.question", {
             '[data-role="question-title"]'
         ],
 
-        acceptedBodyTag : [
-            '.dyn-question-body',
-            '[data-role="question-body"]'
-        ],   
-
         acceptedInputsTag : [
             '.dyn-question-input',
             '[data-role="question-input"]'
@@ -57,7 +46,7 @@ $.widget( "dynform.question", {
         name            : null,
         editable        : true,
         confirmDelete   : true, 
-        type            : 'textarea'
+        type            : null
     },
     
     // construct
@@ -88,7 +77,20 @@ $.widget( "dynform.question", {
         
         return this;
     },
-    
+
+    /**
+     * _detectTitle method
+     * ===================
+     * Looks for a inner question.title element or object
+     * selector for accepted tip elements are defined in options.acceptedTitleTag
+     * 
+     * @return {mixed [bool/jQuery Object]} 
+     * - false, or 
+     * - jQuery Object containing the first inner element that matches selector 
+     *
+     * @author Danilo Lizama (dlizama@cisal.cl)
+     * @version 1.0 2013/09/16
+     */    
     _detectTitle : function() {
         var title = this.element.find( this.options.acceptedTitleTag.join() ).first();
         if ( !title.length ) return false;
@@ -96,12 +98,19 @@ $.widget( "dynform.question", {
         return title.questionTitle();        
     },
 
-    _detectBody : function() {
-        var body = this.element.find( this.options.acceptedBodyTag.join() ).first();
-        if ( !body.length ) return false;
-        return body.questionBody();                
-    },
-
+    /**
+     * _detectTip method
+     * ===================
+     * Looks for a inner question.tip element or object
+     * selector for accepted tip elements are defined in options.acceptedTipTag
+     * 
+     * @return {mixed [bool/jQuery Object]} 
+     * - false, or 
+     * - jQuery Object containing the first inner element that matches selector 
+     *
+     * @author Danilo Lizama (dlizama@cisal.cl)
+     * @version 1.0 2013/09/16
+     */
     _detectTip : function() {
         var tip = this.element.find( this.options.acceptedTipTag.join() ).first();
         if ( !tip.length ) return false;
@@ -112,33 +121,36 @@ $.widget( "dynform.question", {
         var inputs = this.element.find( this.options.acceptedInputsTag.join() );
 
         if (inputs.length) {
+
+            // we have to create a reference of this to pass to the anonymous callback used in $.each(); 
             questionObject = this;
+
             inputs.each( function(){
                 // set options to pass to recently detected questionInput objects
+                // only these options can pass from question object to input object
+                // * editable
+                // * type
+                // * ... (complete with others options)
                 var options = {
-                    editable: questionObject.options.editable 
+                    editable    : questionObject.options.editable,
+                    type        : questionObject.options.type
                 };
-                $(this).questionInput( options );
+
+                input = $(this).questionInput( options );
+
+                console.log( "created: ");
+                console.log( input );
+
+                questionObject.options.type = questionObject.options.type || input.questionInput("type");
+
             } );
-            this.options.type = inputs.first().questionInput("type");
-            // this._consistencyCheck( inputs );
+
+            console.log ("type:"+this.options.type);
+
             return inputs;
         }
 
         return false;
-    },
-
-    _consistencyCheck : function( inputs ) {
-        // like bind(this) in mootols : questionObject allows pass this object as reference to an anonimous function
-        var questionObject = this;
-
-        inputs.each( function() {
-            input = $(this);
-            if ( input.questionInput("type") !== questionObject.options.type ) {
-                console.log("destroyed for consistency: all inputs must have the same type in a question");
-                input.questionInput("destroy");
-            };
-        });
     },
 
     _createInputs : function( options ) {
