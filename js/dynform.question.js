@@ -66,6 +66,8 @@ $.widget( "dynform.question", {
         // name is not used in question elements, but we will save it among options for further usage
         this.options.name   = this.options.name     || this.element.attr("id");
 
+        this.options.type   = this.options.type     || this.element.attr("type");
+
         this._inputs        = this._detectInputs()  || this._createInputs( this.options );
 
         this._title         = this._detectTitle()   || this._createTitle();
@@ -138,14 +140,9 @@ $.widget( "dynform.question", {
 
                 input = $(this).questionInput( options );
 
-                console.log( "created: ");
-                console.log( input );
-
                 questionObject.options.type = questionObject.options.type || input.questionInput("type");
 
             } );
-
-            console.log ("type:"+this.options.type);
 
             return inputs;
         }

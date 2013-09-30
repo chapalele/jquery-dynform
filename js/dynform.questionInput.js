@@ -38,7 +38,7 @@ $.widget( "dynform.questionInput", {
             '[data-role="question-input-input"]'
         ],        
 
-        type    : 'text',
+        type    : null,
         label   : 'input label',
         value   : 'Default value',
         name    : null,
@@ -48,28 +48,28 @@ $.widget( "dynform.questionInput", {
     // construct
     _create: function() {
 
+        if (!window.console) window.console = {};
+
+        $.extend( true, this.options, this.element.data() );
+
         this.element.addClass( "dyn-question-input" );
 
+        this._label         = this._detectLabel() || this._createLabel();
+
         this._input     = this._detectInput() || this._createInput();
-
-        //TODO detect input improve
-
 
         if ( this._mustHaveId ) {
             this.element.guid();
         }  
 
-        this.options.name = this.options.name || this.element.attr("id");
-
-        this._label     = this._detectLabel() || this._createLabel();
+        this.options.name   = this.options.name || this.element.attr("id");
         
-
         if ( this.options.editable ) {
             this.element.addClass( "dyn-editable");
             this._control   = this._createControl();    
         }
-        
 
+        
     },
 
     _mustHaveId : function() {
@@ -117,7 +117,27 @@ $.widget( "dynform.questionInput", {
 
         if ( !input.length ) return false;
 
-        this.options.type   = ( input.is("textarea") ) ? "textarea" : input.attr("type");
+        var detectedType = ( input.is("textarea") ) ? "textarea" : input.attr("type");
+
+        if ( typeof(detectedType) !== "undefined" && this.options.type == null || this.options.type == detectedType) {
+            this.options.type = detectedType;
+        }
+
+        else if ( typeof(detectedType) !== "undefined" && detectedType !== this.options.type ) {
+            if('console' in window) console.log("not allowed in question of type " + this.options.type );
+            this.element.remove();
+            return false;
+        }        
+
+        else if ( typeof(detectedType) == "undefined" && this.options.type !== null ) {
+            input.attr('type',this.options.type);
+        }
+
+        else {
+            input.attr('type','text');
+            this.options.type = "text";
+        }
+
         this.options.value  = input.attr("value");
         this.options.name   = input.attr("name");
 
@@ -137,6 +157,9 @@ $.widget( "dynform.questionInput", {
      * @version 1.0 2013/09/09
      */
     _createLabel : function() {
+
+        this.options.type = this.options.type || 'text';
+
         var label = $('<label></label>');
         if (this.options.type !== 'textarea') {
             label.text(this.options.label);
@@ -156,6 +179,8 @@ $.widget( "dynform.questionInput", {
      * @version 1.0 2013/09/09
      */    
     _createInput : function() {
+
+        this.options.type = this.options.type || 'text';
 
         switch (this.options.type)
         {
@@ -209,15 +234,15 @@ $.widget( "dynform.questionInput", {
 
     destroy : function() {
 
-        console.log("destroying...");
-
         if (this._control) {
             this._control.off('click', '.button', this._onButtonClick);
-            this.element.remove();
+            this._control.remove();
         }
 
-        this._super();
+        this._label.remove();
+        this._input.remove();
 
+        this._super();
     },
 
 
@@ -238,12 +263,8 @@ $.widget( "dynform.questionInput", {
 
         var $button = ( $clicked.hasClass("button") ) ? $clicked : $clicked.parent('.button');
 
-        console.log("working...");
-
-        if ($button.hasClass("delete")) {
-            console.log("deleting...");
-            console.log($button.parents(".dyn-question-input").get(0));
-            $button.parents(".dyn-question-input").questionInput("destroy");
+        if ( $button.hasClass("delete") ) {
+            $button.parents(".dyn-question-input").remove();
         }
 
     }, 
@@ -260,7 +281,7 @@ $.widget( "dynform.questionInput", {
      */
     type : function( value ) {
         if (value !== undefined) {
-            console.log("type attribute cannot be modified");
+            if('console' in window) console.log("type attribute cannot be modified");
         } 
         return this.options.type;
     },    
