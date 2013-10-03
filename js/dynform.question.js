@@ -230,6 +230,12 @@ $.widget( "dynform.question", {
             $button.parents(".dyn-question").question("destroy");
         }
 
+        if ($button.hasClass("add")) {
+            $button.parents(".dyn-question").question("addInput");
+        }
+
+
+
     },
 
 
@@ -257,22 +263,24 @@ $.widget( "dynform.question", {
         return this._inputs;
     },
 
-    addInput : function( options ) {
-        options = options || {};
+    addInput : function( ) {
+
+
+        // options = options || {};
         
-        // new input type must be equal to current question type 
-        options.type = this.options.type;
+        // // new input type must be equal to current question type 
+        // options.type = this.options.type;
 
-        // if options.name is not provided we will take the default question name
-        // for checkboxes and text a "[]" must be added, this allows to pass multiple values in the same variable to server
-        if ( typeof options.name === "undefined" && this._acceptMultipleName ) {
-            options.name = this._prepMultipleName();
-        }
-        else if ( typeof options.name === "undefined" ) {
-            options.name = this.options.name;
-        }
+        // // if options.name is not provided we will take the default question name
+        // // for checkboxes and text a "[]" must be added, this allows to pass multiple values in the same variable to server
+        // if ( typeof options.name === "undefined" && this._acceptMultipleName ) {
+        //     options.name = this._prepMultipleName();
+        // }
+        // else if ( typeof options.name === "undefined" ) {
+        //     options.name = this.options.name;
+        // }
 
-        var input = $('<div></div>').questionInput( options );
+        var input = $('<div></div>').questionInput( this.options );
         return input.appendTo(this.element);
     },  
 
