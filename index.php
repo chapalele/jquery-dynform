@@ -11,15 +11,16 @@
 		<script src="js/guid.js"></script>
 
 		<script src="js/dynform.questionInput.js"></script>
-		
 		<script src="js/dynform.questionTitle.js"></script>
-		<script src="js/dynform.questionBody.js"></script>
 		<script src="js/dynform.questionTip.js"></script>
 
 		<script src="js/dynform.question.js"></script>
 
 
 	</head>
+
+
+
 
 	<body>
 
@@ -31,17 +32,18 @@
 		</div>
 
 
-		<div class="question" >
+<!-- 		<div class="question" data-type="textarea">
 
 			<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
-				<label>label nueva<input value="Default value"  name="input1"></label>
+				<label>label nueva<input value="Default value" type="text" name="input1"></label>
 			</div>
 
 			<div class="dyn-question-input">
 				<label>label 2<input value="Default value" type="radio" name="input2"></label>
 			</div>				
 
-		</div>
+		</div> -->
+
 <!--
  		<div class="question dyn-question" id="js-aefde997-b6ac-4c2d-9ebb-dcf85635e478">
 			<div class="dyn-question-title">Hola</div>
@@ -67,7 +69,9 @@
 
 			$(".buttons").on('click', function(e){
 				var etype = e.target.id || 'textarea';
-				$("<div>").question({type: etype }).appendTo('body');
+				added = $("<div>");
+				added.question({type: etype }).appendTo('body');
+				console.log( added.question("getOptions") );
 			});
 
 

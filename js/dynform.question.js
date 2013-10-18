@@ -46,7 +46,7 @@ $.widget( "dynform.question", {
         name            : null,
         editable        : true,
         confirmDelete   : true, 
-        type            : null
+        type            : 'textarea'
     },
     
     // construct
@@ -64,14 +64,22 @@ $.widget( "dynform.question", {
 
         // if there's no name, we are going to use id
         // name is not used in question elements, but we will save it among options for further usage
-        this.options.name   = this.options.name     || this.element.attr("id");
+        this.options.name   = this.options.name || this.element.attr("id");
 
-        this.options.type   = this.options.type     || this.element.attr("type");
+        if ( this._acceptMultipleName() ) {
+            this.options.name   = this._prepMultipleName ( this.options.name );    
+        }   
+
+        console.log(this.options.type);
+        console.log(this);
+        console.log(this.options);
 
         this._inputs        = this._detectInputs()  || this._createInputs( this.options );
 
         this._title         = this._detectTitle()   || this._createTitle();
         this._tip           = this._detectTip()     || this._createTip();
+
+        console.log( this._inputs );
 
         if (this.options.editable) {
             this._control   = this._createControl();
@@ -140,9 +148,11 @@ $.widget( "dynform.question", {
 
                 input = $(this).questionInput( options );
 
-                questionObject.options.type = questionObject.options.type || input.questionInput("type");
+                // questionObject.options.type = questionObject.options.type || input.questionInput("type");
 
             } );
+
+            console.log(input);
 
             return inputs;
         }
@@ -233,9 +243,6 @@ $.widget( "dynform.question", {
         if ($button.hasClass("add")) {
             $button.parents(".dyn-question").question("addInput");
         }
-
-
-
     },
 
 
@@ -264,33 +271,18 @@ $.widget( "dynform.question", {
     },
 
     addInput : function( ) {
-
-
-        // options = options || {};
-        
-        // // new input type must be equal to current question type 
-        // options.type = this.options.type;
-
-        // // if options.name is not provided we will take the default question name
-        // // for checkboxes and text a "[]" must be added, this allows to pass multiple values in the same variable to server
-        // if ( typeof options.name === "undefined" && this._acceptMultipleName ) {
-        //     options.name = this._prepMultipleName();
-        // }
-        // else if ( typeof options.name === "undefined" ) {
-        //     options.name = this.options.name;
-        // }
-
         var input = $('<div></div>').questionInput( this.options );
+        
         return input.appendTo(this.element);
     },  
 
+
     _prepMultipleName : function( name ) {
-        name = name || this.options.name;
         var suffix = '[]';
-        if (name.substr(name.length - 2) !== suffix ) {
-            this.options.name = name+suffix;
+        if ( name.slice(-2) !== suffix ) {
+            name = name + suffix;
         }
-        return this.options.name;
+        return name;
     },
     
     _setOption: function( key, value ) {
@@ -324,7 +316,11 @@ $.widget( "dynform.question", {
         if ( this.options.value == 100 ) {
             this._trigger( "complete", null, { value: 100 } );
         }
-    },    
+    }, 
+
+    getOptions: function() {
+        return this.options;
+    },   
  
     // private methods.
     _constrain: function( value ) {

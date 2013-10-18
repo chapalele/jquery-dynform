@@ -54,8 +54,7 @@ $.widget( "dynform.questionInput", {
 
         this.element.addClass( "dyn-question-input" );
 
-        this._label         = this._detectLabel() || this._createLabel();
-
+        this._label     = this._detectLabel() || this._createLabel();
         this._input     = this._detectInput() || this._createInput();
 
         if ( this._mustHaveId ) {
@@ -124,8 +123,8 @@ $.widget( "dynform.questionInput", {
         }
 
         else if ( typeof(detectedType) !== "undefined" && detectedType !== this.options.type ) {
-            if('console' in window) console.log("not allowed in question of type " + this.options.type );
-            this.element.remove();
+            console.log("not allowed input type "+ detectedType + " in question of type " + this.options.type );
+            this.destroy();
             return false;
         }        
 
@@ -240,7 +239,7 @@ $.widget( "dynform.questionInput", {
         }
 
         this._label.remove();
-        this._input.remove();
+        // this._input.remove();
 
         this._super();
     },
