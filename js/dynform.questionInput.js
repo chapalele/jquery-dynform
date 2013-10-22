@@ -312,6 +312,15 @@ $.widget( "dynform.questionInput", {
      */    
     _setOptions: function( options ) {
         this._super( options );
-    }
+    },
+
+    config: function() {
+        var config = {
+            value   : this.options.value,
+            checked : this.options.checked
+        };
+
+        return config ;
+    },       
        
 });

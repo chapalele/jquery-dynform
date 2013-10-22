@@ -70,16 +70,13 @@ $.widget( "dynform.question", {
             this.options.name   = this._prepMultipleName ( this.options.name );    
         }   
 
-        console.log(this.options.type);
-        console.log(this);
-        console.log(this.options);
-
-        this._inputs        = this._detectInputs()  || this._createInputs( this.options );
+        if ( ! this._detectInputs() ) {
+            this._createInputs( this.options );
+        }
 
         this._title         = this._detectTitle()   || this._createTitle();
         this._tip           = this._detectTip()     || this._createTip();
 
-        console.log( this._inputs );
 
         if (this.options.editable) {
             this._control   = this._createControl();
@@ -134,6 +131,7 @@ $.widget( "dynform.question", {
 
             // we have to create a reference of this to pass to the anonymous callback used in $.each(); 
             questionObject = this;
+            detected = [];
 
             inputs.each( function(){
                 // set options to pass to recently detected questionInput objects
@@ -146,15 +144,15 @@ $.widget( "dynform.question", {
                     type        : questionObject.options.type
                 };
 
-                input = $(this).questionInput( options );
-
-                // questionObject.options.type = questionObject.options.type || input.questionInput("type");
+                detected.push( $(this).questionInput( options ) );
 
             } );
 
-            console.log(input);
+            this._inputs.push( detected );
 
-            return inputs;
+            console.log( this._inputs );
+
+            return Boolean(detected.length)
         }
 
         return false;
@@ -318,9 +316,25 @@ $.widget( "dynform.question", {
         }
     }, 
 
-    getOptions: function() {
-        return this.options;
+    config: function() {
+        var config = {
+            name    : this.options.name,
+            type    : this.options.type,
+            title   : this.options.title,
+            tip     : this.options.tip,
+            inputs  : []
+        };
+
+        $.each( this._inputs, function( index, value ) {
+            config.inputs.push( value.questionInput("config") );
+        });
+
+        return config;
     },   
+
+    toJSON : function() {
+        return JSON.stringify( this.config() );
+    },
  
     // private methods.
     _constrain: function( value ) {
