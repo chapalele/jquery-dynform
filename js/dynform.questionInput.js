@@ -124,6 +124,7 @@ $.widget( "dynform.questionInput", {
 
         else if ( typeof(detectedType) !== "undefined" && detectedType !== this.options.type ) {
             console.log("not allowed input type "+ detectedType + " in question of type " + this.options.type );
+            console.log(this);
             this.destroy();
             return false;
         }        

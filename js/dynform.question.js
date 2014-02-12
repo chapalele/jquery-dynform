@@ -21,6 +21,7 @@ $.widget( "dynform.question", {
     _body       : null,
     _tip        : null,
     _control    : null,
+    _inputs     : [],
     _nada       : "content",
     
     options: {
@@ -151,6 +152,7 @@ $.widget( "dynform.question", {
             this._inputs.push( detected );
 
             console.log( this._inputs );
+            console.log( detected.length );
 
             return Boolean(detected.length)
         }

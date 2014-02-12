@@ -14,7 +14,11 @@
 		<script src="js/dynform.questionTitle.js"></script>
 		<script src="js/dynform.questionTip.js"></script>
 
-		<script src="js/dynform.question.js"></script>
+		<script src="js/dynform.editable.js"></script>
+
+		<script src="js/dynform.questionTip.js"></script>
+
+		<script src="js/ckeditor/ckeditor.js"></script>
 
 
 	</head>
@@ -26,10 +30,16 @@
 			<button id="text">+ text</button>
 			<button id="radio">+ radio</button>
 			<button id="checkbox">+ checkbox</button>
+
 		</div>
 
+		<div>
+			<button id="editable">editable</button>
+		</div>
 
-		<div class="question" data-type="textarea">
+		<div id="test"></div>
+
+<!-- 		<div class="question" data-type="text">
 
 			<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
 				<label>label nueva<input value="Default value" type="text" name="input1"></label>
@@ -42,7 +52,7 @@
 		</div>
 
 
- 		<div class="question dyn-question" id="js-aefde997-b6ac-4c2d-9ebb-dcf85635e478">
+ 		<div class="question dyn-question" data-type="text" id="js-aefde997-b6ac-4c2d-9ebb-dcf85635e478">
 			<div class="dyn-question-title">Hola</div>
 			<div class="dyn-question-body">
 				<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
@@ -54,12 +64,13 @@
 				</div>				
 			</div>
 			<div class="dyn-question-tip">Question tipeo</div>
-		</div> 
+		</div>  -->
 
 		<script>
 
 			$(function() {
-			     var uli = $(".question").question();
+				CKEDITOR.disableAutoInline = true;
+			     // var uli = $(".question").question();
 
 			     // uli.question("addInput");
 			});
@@ -69,6 +80,15 @@
 				added = $("<div>");
 				added.question({type: etype }).appendTo('body');
 				console.log( added.question("toJSON") );
+			});
+
+			$('#editable').on('click', function(){
+				var add = $('<div>fgfg</div>');
+
+				add.editable().appendTo('#test');
+
+				// CKEDITOR.inline( add.editable("option", 'id') );
+
 			});
 
 
