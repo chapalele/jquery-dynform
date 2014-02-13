@@ -6,3 +6,4 @@
 .dyn-question-input label textarea {display: block;}
 .dyn-control {position: absolute; top: 0; right: 0;}
 .dyn-control .ui-widget {font-size: 10px;}
+.dyn-editable { min-height: 14px; min-width: 12px;}

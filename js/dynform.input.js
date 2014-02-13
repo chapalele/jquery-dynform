@@ -1,31 +1,22 @@
-/**
- * editable widget:
- * ----------------------
- * produces: 
- * <div class="dyn-editable .....(options)" id="unique" attribute="attribute">
- *     options.content
- * </div>
- *
- * Requires:
- * ---------
- * -jQueryUI widget
- * -guid
- * 
- */
-$.widget( "dynform.editable", {
+$.widget( "dynform.input", {
     
     options: {
         id          : null,
-        html        : 'Click to edit',
-        editable    : true
+        name        : null,
+        value       : null,
+        type        : 'radio',
     },
     
     // construct
     _create: function() {
-        this.element.addClass( "dyn-editable" );
+        this.element.addClass( "dyn-input" );
 
         if( ! this.options.id ) {
             this.setId();
+        }
+
+        if( ! this.options.name ) {
+            this.setName();
         }
 
         if ( this.element.html() ) {
@@ -41,6 +32,19 @@ $.widget( "dynform.editable", {
     setId: function( id ) {
         var id = id || this.element.guid().attr('id');
         this._setOption('id', id);
+    },
+
+    setName: function( name ) {
+        var name = name || this.element.attr('name') || this.options.id;
+        this._setOption('name', name);
+    },
+
+    _prepName : function( name ) {
+        var is_multiple = name.search("[]")
+    },
+
+    _isMultiple : function(name) {
+        return (this.options.name.search("[]")) ? true : false;
     },
 
     setHtml: function(html) {

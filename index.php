@@ -19,6 +19,7 @@
 		<script src="js/dynform.questionTip.js"></script>
 
 		<script src="js/ckeditor/ckeditor.js"></script>
+		<script src="js/ckeditor/adapters/jquery.js"></script>
 
 
 	</head>
@@ -35,6 +36,7 @@
 
 		<div>
 			<button id="editable">editable</button>
+			<button id="check">checkbox input</button>
 		</div>
 
 		<div id="test"></div>
@@ -83,13 +85,21 @@
 			});
 
 			$('#editable').on('click', function(){
-				var add = $('<div>fgfg</div>');
+				var editable = $('<div>Click to edit or remove</div>');
+				editable.editable().appendTo('#test').addClass("dyn-question-title");
+			});
 
-				add.editable().appendTo('#test');
-
-				// CKEDITOR.inline( add.editable("option", 'id') );
+			$('#check').on('click', function(){
+				var label = $('<div/>')
+				var input = $('<input/>');
+				var editable = $('<div>Click to edit or remove</div>');
+				input.appendTo(label);
+				editable.editable().appendTo(label);
+				label.appendTo('#test').addClass("dyn-question-input");
 
 			});
+
+
 
 
 			
