@@ -77,9 +77,6 @@ $.widget( "dynform.newquestion", {
         return ($.inArray(this.options.type, ['text','checkbox','radio']) !== -1) ? true : false;
     },
 
-    _acceptMultipleName : function () {
-        return ($.inArray(this.options.type, ['text', 'checkbox']) !== -1) ? true : false;
-    },
 
     /**
      * _createControl method
