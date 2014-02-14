@@ -1,35 +1,28 @@
 $.widget( "dynform.newquestion", {
     
     _title      : null,
-    _body       : null,
     _tip        : null,
     _control    : null,
     _inputs     : [],
     
     options: {
-        acceptedTitleTag : [
-            'h2',
-            'h3',
-            '.dyn-question-title',
-            '[data-role="question-title"]'
-        ],
-
-        acceptedInputsTag : [
-            '.dyn-question-input',
-            '[data-role="question-input"]'
-        ],         
-
-        acceptedTipTag : [
-            '.dyn-question-tip',
-            '[data-role="question-tip"]'
-        ],             
-
-        title           : 'Click to edit title',
-        tip             : 'Click to edit tip',
-        name            : null,
         editable        : true,
+        name            : null,
         confirmDelete   : true, 
-        type            : 'textarea'
+        type            : 'textarea',        
+
+
+        title : {
+            html        : 'Click to edit',
+            value       : null
+        },
+   
+        tip : {
+            html        : 'Click to edit',
+            value       : null
+        },
+
+        
     },
     
     // construct
@@ -45,102 +38,17 @@ $.widget( "dynform.newquestion", {
         // ATENTION: this overrides options setted by javascript when creating the object: $( [selector] ).question( { overriden-option-if-using-html-data: 'never used value'} )
         $.extend( true, this.options, this.element.data() );
 
-        // if there's no name, we are going to use id
-        // name is not used in question elements, but we will save it among options for further usage
-        this.options.name   = this.options.name || this.element.attr("id");
 
-        if ( this._acceptMultipleName() ) {
-            this.options.name   = this._prepMultipleName ( this.options.name );    
-        }   
-
-        if ( ! this._detectInputs() ) {
-            this._createInputs( this.options );
-        }
-
-        this._title         = this._detectTitle()   || this._createTitle();
-        this._tip           = this._detectTip()     || this._createTip();
-
+        this._title = this._createTitle();
+        this._tip   = this._createTip();
 
         if (this.options.editable) {
             this._control   = this._createControl();
         }
         
-        return this;
+        console.log( this.options);
     },
 
-    /**
-     * _detectTitle method
-     * ===================
-     * Looks for a inner question.title element or object
-     * selector for accepted tip elements are defined in options.acceptedTitleTag
-     * 
-     * @return {mixed [bool/jQuery Object]} 
-     * - false, or 
-     * - jQuery Object containing the first inner element that matches selector 
-     *
-     * @author Danilo Lizama (dlizama@cisal.cl)
-     * @version 1.0 2013/09/16
-     */    
-    _detectTitle : function() {
-        var title = this.element.find( this.options.acceptedTitleTag.join() ).first();
-        if ( !title.length ) return false;
-        this.options.title.text = title.text();
-        return title.questionTitle();        
-    },
-
-    /**
-     * _detectTip method
-     * ===================
-     * Looks for a inner question.tip element or object
-     * selector for accepted tip elements are defined in options.acceptedTipTag
-     * 
-     * @return {mixed [bool/jQuery Object]} 
-     * - false, or 
-     * - jQuery Object containing the first inner element that matches selector 
-     *
-     * @author Danilo Lizama (dlizama@cisal.cl)
-     * @version 1.0 2013/09/16
-     */
-    _detectTip : function() {
-        var tip = this.element.find( this.options.acceptedTipTag.join() ).first();
-        if ( !tip.length ) return false;
-        return tip.questionTip();    
-    },
-
-    _detectInputs : function() {
-        var inputs = this.element.find( this.options.acceptedInputsTag.join() );
-
-        if (inputs.length) {
-
-            // we have to create a reference of this to pass to the anonymous callback used in $.each(); 
-            questionObject = this;
-            detected = [];
-
-            inputs.each( function(){
-                // set options to pass to recently detected questionInput objects
-                // only these options can pass from question object to input object
-                // * editable
-                // * type
-                // * ... (complete with others options)
-                var options = {
-                    editable    : questionObject.options.editable,
-                    type        : questionObject.options.type
-                };
-
-                detected.push( $(this).questionInput( options ) );
-
-            } );
-
-            this._inputs.push( detected );
-
-            console.log( this._inputs );
-            console.log( detected.length );
-
-            return Boolean(detected.length)
-        }
-
-        return false;
-    },
 
     _createInputs : function( options ) {
         return [ this.addInput( options ) ];
@@ -151,7 +59,7 @@ $.widget( "dynform.newquestion", {
     },       
 
     _createTitle : function() {
-        var title = $('<div></div>').questionTitle(this.options);
+        var title = $('<div></div>').editable(this.options.title).addClass("dyn-question-title");
         return title.prependTo(this.element);  
     },
 
@@ -161,8 +69,8 @@ $.widget( "dynform.newquestion", {
     },    
         
     _createTip : function() {
-        var tip = $('<div></div>').questionTip(this.options);
-        return tip.insertAfter(this._title);      
+        var title = $('<div></div>').editable(this.options.tip).addClass("dyn-question-tip");
+        return title.appendTo(this.element);    
     },
 
     _allowCreate : function() {

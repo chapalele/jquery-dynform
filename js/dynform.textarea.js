@@ -1,17 +1,14 @@
-$.widget( "dynform.input", {
+$.widget( "dynform.textarea", {
     
     options: {
         id          : null,
         name        : null,
-        value       : null,
-        type        : 'radio',
+        value       : null
     },
     
     // construct
     _create: function() {
-        this.element.addClass( "dyn-input" );
-
-        this.element.attr('type', this.options.type);
+        this.element.addClass( "dyn-textarea" );
         
         this.setId();
         this.setName();
@@ -26,28 +23,17 @@ $.widget( "dynform.input", {
     }, 
 
     setValue: function( value ) {
-        var value = value || this.options.id || this.element.attr('value');
+        var value = value || this.options.id || this.element.val('value');
         this._setOption('value', value);
-        this.element.attr('value', value);
+        this.element.val(value);
         return this;
     },
 
     setName: function( name ) {
-        var name = this._prepName( name || this.options.name || this.element.attr('name') || this.element.attr('id') );
+        var name = name || this.options.name || this.element.attr('name') || this.options.id;        
         this._setOption('name',  name);
         this.element.attr('name', name);
         return this;
-    },
-
-    _prepName : function( name ) {
-        if (this.options.type === 'checkbox' && !this._isMultiple( name ) ) {
-            name += "[]";
-        }
-        return name;
-    },
-
-    _isMultiple : function(name) {
-        return (name.search(/\[]/) !== -1) ? true : false;
     },
     
     _setOption: function( key, value ) {

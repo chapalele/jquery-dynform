@@ -15,6 +15,9 @@
 		<script src="js/dynform.questionTip.js"></script>
 
 		<script src="js/dynform.editable.js"></script>
+		<script src="js/dynform.input.js"></script>
+		<script src="js/dynform.textarea.js"></script>
+		<script src="js/dynform.newquestion.js"></script>
 
 		<script src="js/dynform.questionTip.js"></script>
 
@@ -37,36 +40,11 @@
 		<div>
 			<button id="editable">editable</button>
 			<button id="check">checkbox input</button>
+			<button id="question">question</button>
 		</div>
 
 		<div id="test"></div>
 
-<!-- 		<div class="question" data-type="text">
-
-			<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
-				<label>label nueva<input value="Default value" type="text" name="input1"></label>
-			</div>
-
-			<div class="dyn-question-input">
-				<label>label 2<input value="Default value" type="radio" name="input2"></label>
-			</div>				
-
-		</div>
-
-
- 		<div class="question dyn-question" data-type="text" id="js-aefde997-b6ac-4c2d-9ebb-dcf85635e478">
-			<div class="dyn-question-title">Hola</div>
-			<div class="dyn-question-body">
-				<div class="dyn-question-input" id="js-2b759ade-6942-4327-bad1-e6c06da91bf6">
-					<label>label 1<input value="Default value" type="text" name="input1"></label>
-				</div>
-
-				<div class="dyn-question-input">
-					<label>label 2<input value="Default value" type="text" name="input2"></label>
-				</div>				
-			</div>
-			<div class="dyn-question-tip">Question tipeo</div>
-		</div>  -->
 
 		<script>
 
@@ -93,9 +71,20 @@
 				var label = $('<div/>')
 				var input = $('<input/>');
 				var editable = $('<div>Click to edit or remove</div>');
-				input.appendTo(label);
+				input.input({type:'checkbox'}).appendTo(label);
 				editable.editable().appendTo(label);
+
+				editable.on("editableupdate", function(event,options){
+					input.input("setValue", options.value)
+				});
+
 				label.appendTo('#test').addClass("dyn-question-input");
+
+			});
+
+			$('#question').on('click', function(){
+				var question = $('<div/>');
+				question.newquestion({type:'textarea'}).appendTo('#test');
 
 			});
 

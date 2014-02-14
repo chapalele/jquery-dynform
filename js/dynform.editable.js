@@ -15,23 +15,18 @@
 $.widget( "dynform.editable", {
     
     options: {
-        id          : null,
         html        : 'Click to edit',
-        editable    : true
+        editable    : true,
+        value       : null
     },
     
     // construct
     _create: function() {
         this.element.addClass( "dyn-editable" );
 
-        if( ! this.options.id ) {
-            this.setId();
-        }
-
-        if ( this.element.html() ) {
-            this.setHtml();
-        }        
-
+        this.setId();
+        this.setHtml();
+    
         if ( this.options.editable ) {
             this.makeEditable();
         }
@@ -39,18 +34,17 @@ $.widget( "dynform.editable", {
     },
 
     setId: function( id ) {
-        var id = id || this.element.guid().attr('id');
+        var id = id || this.options.id || this.element.attr('id') || this.element.guid().attr('id');
         this._setOption('id', id);
-    },
+        return this;
+    }, 
 
-    setHtml: function(html) {
-        var html = html || this.element.html();
+    setHtml: function( html ) {
+        var html = html || this.options.html || this.element.html();
         this._setOption('html', html);
-    },
-
-    getHtml : function() {
-        return this.options.html;
-    },
+        this.element.html( html );
+        return this;
+    },    
 
     makeEditable : function(){
         this.element.prop('contenteditable', true);
@@ -61,6 +55,9 @@ $.widget( "dynform.editable", {
 
     _onBlurEditable : function(event){
         this._setOption('html', this.element.html() );
+        this._setOption('value', this.element.text() );
+        this._trigger("update",event, this.options);
+        console.log( this.toJSON() );
     },
     
     _setOption: function( key, value ) {
@@ -69,7 +66,11 @@ $.widget( "dynform.editable", {
     
     _setOptions: function( options ) {
         this._super( options );
-    },    
+    },   
+
+    toJSON : function() {
+        return JSON.stringify( this.options );
+    }, 
        
     refresh: function() {
         console.log("refresh");

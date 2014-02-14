@@ -86,79 +86,7 @@ $.widget( "dynform.question", {
         return this;
     },
 
-    /**
-     * _detectTitle method
-     * ===================
-     * Looks for a inner question.title element or object
-     * selector for accepted tip elements are defined in options.acceptedTitleTag
-     * 
-     * @return {mixed [bool/jQuery Object]} 
-     * - false, or 
-     * - jQuery Object containing the first inner element that matches selector 
-     *
-     * @author Danilo Lizama (dlizama@cisal.cl)
-     * @version 1.0 2013/09/16
-     */    
-    _detectTitle : function() {
-        var title = this.element.find( this.options.acceptedTitleTag.join() ).first();
-        if ( !title.length ) return false;
-        this.options.title.text = title.text();
-        return title.questionTitle();        
-    },
 
-    /**
-     * _detectTip method
-     * ===================
-     * Looks for a inner question.tip element or object
-     * selector for accepted tip elements are defined in options.acceptedTipTag
-     * 
-     * @return {mixed [bool/jQuery Object]} 
-     * - false, or 
-     * - jQuery Object containing the first inner element that matches selector 
-     *
-     * @author Danilo Lizama (dlizama@cisal.cl)
-     * @version 1.0 2013/09/16
-     */
-    _detectTip : function() {
-        var tip = this.element.find( this.options.acceptedTipTag.join() ).first();
-        if ( !tip.length ) return false;
-        return tip.questionTip();    
-    },
-
-    _detectInputs : function() {
-        var inputs = this.element.find( this.options.acceptedInputsTag.join() );
-
-        if (inputs.length) {
-
-            // we have to create a reference of this to pass to the anonymous callback used in $.each(); 
-            questionObject = this;
-            detected = [];
-
-            inputs.each( function(){
-                // set options to pass to recently detected questionInput objects
-                // only these options can pass from question object to input object
-                // * editable
-                // * type
-                // * ... (complete with others options)
-                var options = {
-                    editable    : questionObject.options.editable,
-                    type        : questionObject.options.type
-                };
-
-                detected.push( $(this).questionInput( options ) );
-
-            } );
-
-            this._inputs.push( detected );
-
-            console.log( this._inputs );
-            console.log( detected.length );
-
-            return Boolean(detected.length)
-        }
-
-        return false;
-    },
 
     _createInputs : function( options ) {
         return [ this.addInput( options ) ];
